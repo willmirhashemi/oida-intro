@@ -64,7 +64,7 @@
   ::selection { background: var(--ink); color: var(--bone); }
 
   .page {
-    max-width: calc(62ch + 32px);  /* ch measured in Piazzolla */
+    max-width: calc(600px + 32px);  /* ~60 characters per line at 20.5px Piazzolla */
     margin: 0 auto;
     padding: 0 16px;
     min-height: 100vh;
@@ -82,11 +82,14 @@
 
   .essay { margin-top: clamp(64px, 15vh, 150px); }
   .essay p { margin: 0 0 1.15em; text-wrap: pretty; }
+  .essay .lede { font-size: 1.22em; line-height: 1.45; margin-bottom: 1.1em; }
   .label { font-variant-caps: all-small-caps; letter-spacing: 0.06em; }
-  .essay .meaning { margin-top: 2.2em; font-style: italic; }
+  .essay .meaning { margin: 2.6em 0 0; font-style: italic; text-align: center; font-size: 1.3em; line-height: 1.35; }
   .essay .meaning [lang=grc] { font-style: normal; }
-  .essay .signoff { margin-top: -0.4em; font-variant-caps: all-small-caps; letter-spacing: 0.08em; }
-  .essay .contact { margin-top: 2.2em; }
+  .essay .signoff { margin: 1.1em 0 0; display: flex; justify-content: center; }
+  .essay .signoff svg { height: 30px; width: auto; display: block; }
+  .essay .signoff path { fill: var(--ink); }
+  .essay .contact { margin-top: 3.2em; text-align: center; }
   .essay a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
   .essay a:hover { text-decoration-thickness: 2px; }
 
@@ -185,11 +188,11 @@
   <main class="essay">
     <!-- ESSAY (Will, 2026-10-15). Facts behind it: construction employs ~200M+ people worldwide (ILO: ~7% of global employment);
          construction is ~13% of world GDP (McKinsey Global Institute, "Reinventing Construction", 2017). -->
-    <p>An estimated 200 million+ people work in one of the hardest industries on earth, construction. Every day, workers put their lives on the line, and the companies that employ them pay insurance premiums that can reach into the hundreds of millions.</p>
+    <p class="lede">An estimated 200 million+ people work in one of the hardest industries on earth, construction. Every day, workers put their lives on the line, and the companies that employ them pay insurance premiums that can reach into the hundreds of millions.</p>
     <p>When accidents happen, claims are rarely told exactly as they happened. They’re pieced together from fragmented memories and outdated logs. An industry that accounts for around 13% of the world’s GDP has seen only a touch of modern technology.</p>
     <p>Oida is the first step toward what job sites will look like in the future. A wearable that records and seals the view that matters most and is almost never captured, the worker’s. It’s meant to capture the truth not just sometimes but all the time, so workers are protected and claims are settled on what actually happened.</p>
     <p class="meaning">“I have seen, and therefore I know.”</p>
-    <p class="signoff">Oida</p>
+    <p class="signoff"><svg viewBox="80.48 47.77 115.53 166.55" role="img" aria-label="Oida"><path d="M186.63540649414062 141.75404357910156Q193.69833374023438 161.15928649902344 185.96107482910156 179.6472930908203Q178.0158233642578 198.6322784423828 159.2720184326172 205.4544677734375Q140.52821350097656 212.2766571044922 122.23847961425781 202.84042358398438Q104.42753601074219 193.65121459960938 97.36460494995117 174.24595642089844Q90.30167388916016 154.8406982421875 98.03892517089844 136.3527069091797Q101.026123046875 129.21487426757812 105.53973388671875 123.79632568359375Q87.65425872802734 112.96028900146484 86.51984405517578 93.67530059814453Q86.5103988647461 93.51470947265625 86.5048828125 93.35565185546875Q86.00279998779297 80.65479278564453 94.47171020507812 70.60501861572266Q101.63411712646484 62.10563278198242 113.57440185546875 57.611976623535156Q124.69908142089844 53.425270080566406 137.02346801757812 53.802249908447266Q150.12051391601562 54.20286560058594 161.14295959472656 59.714088439941406L150.85704040527344 80.2859115600586Q144.3600616455078 77.03742218017578 136.32028198242188 76.79149627685547Q128.54278564453125 76.55359649658203 121.67559814453125 79.13802337646484Q109.17704772949219 83.84178161621094 109.48568725585938 92.41350555419922Q110.2049331665039 103.35441589355469 129.28103637695312 109.1264419555664Q145.6964569091797 104.87110137939453 161.7615203857422 113.1595687866211Q179.57247924804688 122.34878540039062 186.63540649414062 141.75404357910156ZM165.0224609375 149.62049865722656Q161.03518676757812 138.66554260253906 151.21592712402344 133.5994873046875Q141.87542724609375 128.7804412841797 132.59444046020508 132.158447265625Q123.3134536743164 135.5364532470703 119.25584411621094 145.2320098876953Q114.9902572631836 155.42454528808594 118.97753143310547 166.37950134277344Q122.96480560302734 177.33445739746094 132.78407287597656 182.4005126953125Q142.12454223632812 187.21954345703125 151.40554809570312 183.84154510498047Q160.68655395507812 180.4635467529297 164.74415588378906 170.7679901123047Q169.00973510742188 160.57546997070312 165.0224609375 149.62049865722656Z"/></svg></p>
     <p class="contact"><span class="label">Get in touch:</span> <a href="mailto:hello@useoida.com">hello@useoida.com</a></p>
     <!-- /ESSAY -->
   </main>
