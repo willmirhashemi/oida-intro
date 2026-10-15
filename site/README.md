@@ -34,6 +34,6 @@ Choose one of these:
 - **Fonts come only from this site.** There are no requests to Google, so no visitor IPs go to a third party (GDPR).
 
 ## Before it goes live
-- [ ] **Swap in Will's essay.** The current copy is a placeholder, marked in `index.html` between `PLACEHOLDER` comments. Keep the meaning line exactly: *In ancient Greek, οἶδα means "I have seen, and therefore I know."*
+- [x] **Essay:** Will’s essay is in (2026-10-15).
 - [ ] **Confirm the contact email.** `hello@useoida.com` has to exist before launch.
 - [ ] **Test the share card.** Paste the live URL into a link preview (iMessage, Slack or LinkedIn) and check that `og-image.png` shows.
