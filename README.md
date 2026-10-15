@@ -4,6 +4,13 @@ The intro for Oida's one-page mission site. The δ mark appears large, holds, th
 
 Chosen by Will on 2026-10-14 from four round-2 studies (hook retracts, hook becomes the i, the line, the thread), at the default settings below.
 
+## Animation only: `animation.html`
+The same animation with no page around it. The δ holds, writes "oida", and rests on the big centred word. There is no glide to a header and no essay. Use it for showing the mark on its own, screen recordings, a deck or a loading screen.
+- Plays every time it opens. Click, Space or Enter replays it.
+- `?loop` replays it automatically 2 s after it finishes.
+- `?tune` shows the same tuning panel; `?seek=2.4` freezes a frame.
+- Reduced motion shows the finished word without movement.
+
 ## Brand files (vector)
 | File | What it is |
 |---|---|
