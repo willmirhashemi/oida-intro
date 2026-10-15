@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oida</title>
+<meta name="description" content="Oida gives every construction crew a witness: worker-perspective footage, sealed so alteration is detectable.">
+<script>
+/* Decide before first paint whether the intro plays, so the essay never flashes.
+   Plays once per tab session; ?replay or ?tune forces it; reduced motion always skips it. */
+(function () {
+  var d = document.documentElement, q = location.search, rm = false, seen = false;
+  try { rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  try { seen = sessionStorage.getItem('oida-intro') === '1'; } catch (e) {}
+  var forced = /[?&](replay|tune)\b/.test(q);
+  if (!rm && (forced || !seen)) {
+    d.className += ' intro';
+    // Fail open: if the intro script never gets going (error, blocked), show the page.
+    setTimeout(function () {
+      if (!window.__oidaIntroStarted) d.className = d.className.replace(/\s*\bintro\b/, '');
+    }, 4000);
+  }
+})();
+</script>
+<!-- Piazzolla is self-hosted (SIL OFL 1.1, fonts/OFL.txt): no request to Google, so no visitor IP leaves the site. -->
+<link rel="preload" href="fonts/piazzolla-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="fonts/piazzolla.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F3EFE6">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Oida">
+<meta property="og:title" content="Oida">
+<meta property="og:description" content="Oida gives every construction crew a witness: worker-perspective footage, sealed so alteration is detectable.">
+<meta property="og:url" content="https://useoida.com/">
+<meta property="og:image" content="https://useoida.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root {
+    --bone: #F3EFE6;
+    --ink: #141412;
+    --ink-soft: rgba(20, 20, 18, 0.42);
+    --logo-h: 35px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bone);
+    color: var(--ink);
+    font-family: 'Piazzolla', Georgia, 'Times New Roman', serif;
+    font-optical-sizing: auto;
+    font-weight: 440;
+    font-size: 20.5px;
+    line-height: 1.58;
+    font-variant-numeric: oldstyle-nums proportional-nums;
+    hanging-punctuation: first last;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: var(--ink); color: var(--bone); }
+
+  .page {
+    max-width: calc(62ch + 32px);  /* ch measured in Piazzolla */
+    margin: 0 auto;
+    padding: 0 16px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .brand {
+    padding-top: clamp(40px, 8vh, 80px);
+    display: flex;
+    justify-content: center;
+  }
+  .brand svg { display: block; height: var(--logo-h); width: auto; }
+  .brand svg * { fill: none; stroke: var(--ink); }
+  .brand svg .solid { fill: var(--ink); stroke: none; }
+
+  .essay { margin-top: clamp(64px, 15vh, 150px); }
+  .essay p { margin: 0 0 1.15em; text-wrap: pretty; }
+  .label { font-variant-caps: all-small-caps; letter-spacing: 0.06em; }
+  .essay .meaning { margin-top: 2.2em; font-style: italic; }
+  .essay .meaning [lang=grc] { font-style: normal; }
+  .essay .contact { margin-top: 2.2em; }
+  .essay a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  .essay a:hover { text-decoration-thickness: 2px; }
+
+  .foot {
+    margin-top: auto;
+    padding: 72px 0 28px;
+    text-align: center;
+    font-size: 15px;
+    font-variant-caps: all-small-caps;
+    letter-spacing: 0.06em;
+  }
+  .foot a { color: var(--ink-soft); text-decoration: none; }
+  .foot a:hover { color: var(--ink); }
+
+  /* Intro state: only reachable when the head script ran (JS on, motion allowed). */
+  #stage { display: none; }
+  html.intro body { overflow: hidden; }
+  html.intro #stage {
+    display: block;
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 10;
+  }
+  html.intro .brand svg { visibility: hidden; }
+  html.intro .essay, html.intro .foot { opacity: 0; }
+
+  /* ?tune panel (review only) */
+  #tune {
+    position: fixed; right: 16px; bottom: 16px; z-index: 30;
+    width: 236px; padding: 12px 14px 10px;
+    background: var(--bone); color: var(--ink);
+    border: 1px solid var(--ink);
+    font: 440 14px/1.4 'Piazzolla', Georgia, serif;
+    font-variant-caps: all-small-caps; font-variant-numeric: lining-nums tabular-nums;
+    letter-spacing: 0.06em;
+  }
+  #tune label { display: block; margin: 0 0 8px; }
+  #tune label span { float: right; }
+  #tune input[type=range] { display: block; width: 100%; margin: 4px 0 0; accent-color: var(--ink); }
+  #tune .row { display: flex; gap: 6px; margin-top: 4px; }
+  #tune button {
+    flex: 1; font: inherit; color: var(--ink); background: transparent;
+    border: 1px solid var(--ink); padding: 4px 0; cursor: pointer;
+  }
+  #tune button.on, #tune button:hover { background: var(--ink); color: var(--bone); }
+
+  @media (max-width: 600px) {
+    :root { --logo-h: 29px; }
+    body { font-size: 18px; line-height: 1.58; }
+    .essay { margin-top: clamp(48px, 10vh, 90px); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Intro stage. Everything inside is in the official mark's coordinate space. -->
+<svg id="stage" aria-hidden="true" focusable="false">
+  <g id="world" style="opacity:0">
+    <!-- Official mark, exact (oida-mark.svg, metadata stripped). Shown at rest. -->
+    <path id="mark" fill="#141412" d="M186.63540649414062 141.75404357910156Q193.69833374023438 161.15928649902344 185.96107482910156 179.6472930908203Q178.0158233642578 198.6322784423828 159.2720184326172 205.4544677734375Q140.52821350097656 212.2766571044922 122.23847961425781 202.84042358398438Q104.42753601074219 193.65121459960938 97.36460494995117 174.24595642089844Q90.30167388916016 154.8406982421875 98.03892517089844 136.3527069091797Q101.026123046875 129.21487426757812 105.53973388671875 123.79632568359375Q87.65425872802734 112.96028900146484 86.51984405517578 93.67530059814453Q86.5103988647461 93.51470947265625 86.5048828125 93.35565185546875Q86.00279998779297 80.65479278564453 94.47171020507812 70.60501861572266Q101.63411712646484 62.10563278198242 113.57440185546875 57.611976623535156Q124.69908142089844 53.425270080566406 137.02346801757812 53.802249908447266Q150.12051391601562 54.20286560058594 161.14295959472656 59.714088439941406L150.85704040527344 80.2859115600586Q144.3600616455078 77.03742218017578 136.32028198242188 76.79149627685547Q128.54278564453125 76.55359649658203 121.67559814453125 79.13802337646484Q109.17704772949219 83.84178161621094 109.48568725585938 92.41350555419922Q110.2049331665039 103.35441589355469 129.28103637695312 109.1264419555664Q145.6964569091797 104.87110137939453 161.7615203857422 113.1595687866211Q179.57247924804688 122.34878540039062 186.63540649414062 141.75404357910156ZM165.0224609375 149.62049865722656Q161.03518676757812 138.66554260253906 151.21592712402344 133.5994873046875Q141.87542724609375 128.7804412841797 132.59444046020508 132.158447265625Q123.3134536743164 135.5364532470703 119.25584411621094 145.2320098876953Q114.9902572631836 155.42454528808594 118.97753143310547 166.37950134277344Q122.96480560302734 177.33445739746094 132.78407287597656 182.4005126953125Q142.12454223632812 187.21954345703125 151.40554809570312 183.84154510498047Q160.68655395507812 180.4635467529297 164.74415588378906 170.7679901123047Q169.00973510742188 160.57546997070312 165.0224609375 149.62049865722656Z"/>
+    <!-- Stroked stand-in for the mark (centerline fit from round 1, max error ~1 unit). -->
+    <g id="proxy" fill="none" stroke="#141412" stroke-width="23.04" style="visibility:hidden">
+      <!-- hook centerline, terminal -> bowl joint. Never drawn directly: it is sampled into the pen track. -->
+      <path id="hook" style="display:none" d="M156.00 70.00 C153.32 68.66 150.47 67.62 147.59 66.85 C144.71 66.09 141.69 65.63 138.72 65.42 C135.74 65.20 132.70 65.24 129.73 65.56 C126.76 65.87 123.77 66.44 120.92 67.29 C118.06 68.14 115.19 69.23 112.59 70.66 C109.98 72.09 107.40 73.81 105.29 75.88 C103.19 77.95 101.19 80.42 99.97 83.07 C98.75 85.72 98.07 88.87 98.00 91.77 C97.92 94.67 98.47 97.75 99.51 100.47 C102.0 107.0 112.6 117.6 130.0 121.6"/>
+      <ellipse id="ring" cx="142" cy="158" rx="36.06" ry="39.06" transform="rotate(-20 142 158)"/>
+    </g>
+    <!-- The pen: letters it has written (persist) and the travelling thread (consumed behind it). -->
+    <g id="ink" fill="#141412" stroke="none"></g>
+    <path id="thread" fill="none" stroke="#141412" stroke-width="23.04" stroke-linecap="butt" stroke-linejoin="round"/>
+    <!-- Exact copy of the header's "ida", swapped in the moment the pen finishes. -->
+    <g id="ida" style="visibility:hidden"></g>
+  </g>
+</svg>
+
+<div class="page">
+  <header class="brand">
+    <!-- Final lockup. Same coordinate space as the mark: stroke 23.04 = the δ's stroke.
+         Stem tops are cut on a 1:2 slant (26.6°, the direction the δ's stroke travels into its
+         flat terminal), centred on the x-height / ascender line, high corner on the right like the δ's cut. -->
+    <svg id="lockup" viewBox="96.88 65.44 331.86 141.08" role="img" aria-label="Oida">
+      <g stroke-width="23.04" stroke-linecap="butt">
+        <ellipse class="o" cx="142" cy="158" rx="33.6" ry="37"/>
+        <g class="ida">
+          <polygon class="solid" points="199.82,116.56 222.86,105.04 222.86,205.2 199.82,205.2"/>
+          <circle class="solid dot" cx="211.34" cy="82.4" r="12.6"/>
+          <ellipse cx="280.68" cy="158" rx="33.6" ry="37"/>
+          <polygon class="solid" points="302.76,76.96 325.8,65.44 325.8,205.2 302.76,205.2"/>
+          <ellipse cx="383.62" cy="158" rx="33.6" ry="37"/>
+          <polygon class="solid" points="405.7,116.56 428.74,105.04 428.74,205.2 405.7,205.2"/>
+        </g>
+      </g>
+    </svg>
+  </header>
+
+  <main class="essay">
+    <!-- PLACEHOLDER essay (from brief; meaning line per TYPE.md). Will is writing the real one. -->
+    <p>Construction runs on memory. When something goes wrong on a job site, what happened gets settled months later from daily logs, phone photos and whoever argues best.</p>
+    <p>Oida gives every crew a witness. A small camera on the hard hat records the work from the worker’s side, and every file is sealed, so any change or deletion shows.</p>
+    <p>We never score a worker or rank a crew. The record exists to protect the people who build, and the companies that stand behind them.</p>
+    <p class="meaning">In ancient Greek, <span lang="grc">οἶδα</span> means “I have seen, and therefore I know.”</p>
+    <p class="contact"><span class="label">Get in touch:</span> <a href="mailto:hello@useoida.com">hello@useoida.com</a></p>
+    <!-- /PLACEHOLDER -->
+  </main>
+  <footer class="foot"></footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  if (!/\bintro\b/.test(root.className)) return;
+  try { history.scrollRestoration = 'manual'; } catch (e) {}
+  window.scrollTo(0, 0);
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var $ = function (id) { return document.getElementById(id); };
+  var stage = $('stage'), world = $('world'), mark = $('mark'), proxy = $('proxy');
+  var hook = $('hook'), ring = $('ring'), inkG = $('ink'), thread = $('thread'), ida = $('ida');
+  var lockup = $('lockup');
+  var fadeEls = [document.querySelector('.essay'), document.querySelector('.foot')];
+  var q = location.search;
+
+  try { sessionStorage.setItem('oida-intro', '1'); } catch (e) {}
+
+  // ---- tunables (?hold=1.5&speed=1&size=50&pen=line|lift) ----
+  function num(name, def, lo, hi) {
+    var m = new RegExp('[?&]' + name + '=([\\d.]+)').exec(q);
+    var v = m ? parseFloat(m[1]) : def;
+    return isNaN(v) ? def : Math.max(lo, Math.min(hi, v));
+  }
+  var P = {
+    hold: num('hold', 1.5, 0, 3),
+    speed: num('speed', 1, 0.5, 2),
+    size: num('size', 50, 30, 70),
+    pen: /[?&]pen=lift\b/.test(q) ? 'lift' : 'line'
+  };
+  var LIFT = P.pen === 'lift';
+
+  // ---- "ida" clone for the exact end state ----
+  var clone = lockup.querySelector('.ida').cloneNode(true);
+  clone.removeAttribute('class');
+  ida.setAttribute('stroke-width', '23.04'); ida.setAttribute('fill', 'none'); ida.setAttribute('stroke', '#141412');
+  ida.appendChild(clone);
+  var solids = clone.querySelectorAll('.solid');
+  for (var si = 0; si < solids.length; si++) { solids[si].setAttribute('fill', '#141412'); solids[si].setAttribute('stroke', 'none'); }
+  var cloneDot = clone.querySelector('.dot');
+  cloneDot.parentNode.removeChild(cloneDot);
+  var dot = document.createElementNS(NS, 'circle');      // the i's dot: the pen's last tap
+  dot.setAttribute('r', '12.6'); dot.setAttribute('fill', '#141412');
+  world.appendChild(dot);
+
+  // ---- geometry (mark units) ----
+  var W = 23.04, HW = W / 2;
+  var C = { x: 142, y: 158 };                      // bowl centre = o centre
+  var BOWL = { rx: 36.06, ry: 39.06, th: -20 };    // fitted to the official bowl
+  var O = { rx: 33.6, ry: 37 };                    // upright o / d / a bowls
+  var LOCK = { x: 96.88, y: 65.44, w: 331.86, h: 141.08 };
+  var LCX = LOCK.x + LOCK.w / 2, LCY = LOCK.y + LOCK.h / 2;
+  var XI = 211.34, XD = 314.28, XA = 417.22, DCX = 280.68, ACX = 383.62;
+  var XH = 110.8, ASC = 71.2, BASE = 205.2, MID = 158, DOT = { x: 211.34, y: 82.4 };
+  var EXT = 6;                                     // stems run past their cut line so the cut slices straight stem
+  var MB = mark.getBBox();
+  var MCX = MB.x + MB.width / 2, MCY = MB.y + MB.height / 2;
+
+  // ---- the pen track: one continuous line, root of the hook -> end of the a ----
+  // kind: 'hook' (the δ's own stroke, consumed), 'air' (connector, consumed), 'ink' (a letter, persists)
+  var STEP = 0.5, pts = [], segs = [];
+  function addSeg(kind, fn, n, extra) {
+    var seg = extra || {};
+    seg.kind = kind; seg.i0 = pts.length ? pts.length - 1 : 0;
+    var prev = pts.length ? pts[pts.length - 1] : null;
+    for (var j = 0; j <= n; j++) {
+      var p = fn(j / n);
+      if (prev) { var dx = p[0] - prev.x, dy = p[1] - prev.y; var dl = Math.sqrt(dx * dx + dy * dy); if (j === 0) continue; p = { x: p[0], y: p[1], s: prev.s + dl }; }
+      else p = { x: p[0], y: p[1], s: 0 };
+      pts.push(p); prev = p;
+    }
+    seg.i1 = pts.length - 1; seg.s0 = pts[seg.i0].s; seg.s1 = pts[seg.i1].s;
+    segs.push(seg); return seg;
+  }
+  function cubic(a, b, c, d) {
+    return function (u) {
+      var v = 1 - u;
+      return [v * v * v * a[0] + 3 * v * v * u * b[0] + 3 * v * u * u * c[0] + u * u * u * d[0],
+              v * v * v * a[1] + 3 * v * v * u * b[1] + 3 * v * u * u * c[1] + u * u * u * d[1]];
+    };
+  }
+  function line(a, b) { return function (u) { return [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u]; }; }
+  function loop(cx, dir) {   // full bowl starting at its rightmost point; dir -1 = heading up first
+    return function (u) { var th = dir * u * 2 * Math.PI; return [cx + O.rx * Math.cos(th), MID + O.ry * Math.sin(th)]; };
+  }
+  var HL = hook.getTotalLength();
+  addSeg('hook', function (u) { var p = hook.getPointAtLength(HL * (1 - u)); return [p.x, p.y]; }, Math.ceil(HL / STEP));
+  var TERM = [156, 70], TD = [0.894, 0.447];      // terminal and the direction the stroke leaves it
+  var iTop = XH - EXT;
+  addSeg('air', cubic(TERM, [TERM[0] + 30 * TD[0], TERM[1] + 30 * TD[1]], [XI, iTop - 18], [XI, iTop]), 140, { lead: true });
+  addSeg('ink', line([XI, iTop], [XI, BASE]), 200, { stem: XI, cut: XH });                     // i, down
+  addSeg('air', cubic([XI, BASE], [XI, BASE + 44], [XD, BASE + 44], [XD, BASE]), 260);         // the cradle under the d
+  addSeg('ink', line([XD, BASE], [XD, MID]), 100, { stem: XD });                               // d stem, up to the bowl
+  addSeg('ink', loop(DCX, -1), 480, { bowl: DCX });                                            // d bowl, counter-clockwise
+  addSeg('ink', line([XD, MID], [XD, ASC - EXT]), 200, { stem: XD, cut: ASC });                // d ascender, up
+  addSeg('air', cubic([XD, ASC - EXT], [XD, ASC - 46], [XA, XH - 66], [XA, XH - EXT]), 260);   // the arch over to the a
+  addSeg('ink', line([XA, XH - EXT], [XA, MID]), 120, { stem: XA, cut: XH });                  // a stem, down to the bowl
+  addSeg('ink', loop(ACX, 1), 480, { bowl: ACX });                                             // a bowl, clockwise
+  addSeg('ink', line([XA, MID], [XA, BASE]), 100, { stem: XA });                               // a stem, down to the line
+  var TOTAL = pts[pts.length - 1].s;
+
+  // Pen-lift mode: inter-letter connectors are travelled faster and never inked.
+  for (var k = 0; k < segs.length; k++) {
+    var sg = segs[k];
+    sg.lift = LIFT && sg.kind === 'air' && !sg.lead;
+    sg.w = sg.kind === 'hook' ? 0 : sg.lift ? 0.3 : 1;
+  }
+  var RUNS = [];
+  for (k = 0; k < segs.length; k++) {
+    if (segs[k].lift) continue;
+    if (RUNS.length && !segs[k - 1].lift) RUNS[RUNS.length - 1][1] = segs[k].s1; else RUNS.push([segs[k].s0, segs[k].s1]);
+  }
+  // weighted length table: "pen time" -> track position
+  var WT = [0]; for (k = 0; k < segs.length; k++) WT.push(WT[k] + segs[k].w * (segs[k].s1 - segs[k].s0));
+  var WTOT = WT[WT.length - 1];
+  function sAtWeighted(wv) {
+    for (var j = 0; j < segs.length; j++) {
+      if (wv <= WT[j + 1] || j === segs.length - 1) {
+        var g = segs[j]; if (g.w === 0) continue;
+        return g.s0 + Math.min(1, Math.max(0, (wv - WT[j]) / (WT[j + 1] - WT[j]))) * (g.s1 - g.s0);
+      }
+    }
+    return TOTAL;
+  }
+
+  // ink elements
+  for (k = 0; k < segs.length; k++) {
+    sg = segs[k];
+    if (sg.kind !== 'ink') continue;
+    if (sg.stem) { sg.el = document.createElementNS(NS, 'polygon'); }
+    else { sg.el = document.createElementNS(NS, 'path'); sg.el.setAttribute('fill', 'none'); sg.el.setAttribute('stroke', '#141412');
+           sg.el.setAttribute('stroke-width', W); sg.el.setAttribute('stroke-linecap', 'butt'); sg.el.setAttribute('stroke-linejoin', 'round'); }
+    inkG.appendChild(sg.el);
+  }
+
+  // ---- helpers ----
+  var clamp01 = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
+  var prog = function (t, r) { return clamp01((t - r[0]) / (r[1] - r[0])); };
+  var lerp = function (a, b, u) { return a + (b - a) * u; };
+  var inOut3 = function (u) { return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; };
+  var inOutSine = function (u) { return 0.5 - 0.5 * Math.cos(Math.PI * u); };
+  var out3 = function (u) { return 1 - Math.pow(1 - u, 3); };
+  // pen speed: soft start, long even cruise, soft landing (sine ramps; peak speed only 1.3x average)
+  var RAMP = 0.3;
+  var penEase = (function () {
+    var vmax = 1 / (1 - RAMP);
+    return function (u) {
+      if (u <= 0) return 0; if (u >= 1) return 1;
+      var r = RAMP;
+      var ramp = function (x) { return vmax * (x - r / Math.PI * Math.sin(Math.PI * x / r)) / 2; };  // integral of sine ramp
+      if (u < r) return ramp(u);
+      if (u > 1 - r) return 1 - ramp(1 - u);
+      return ramp(r) + vmax * (u - r);
+    };
+  })();
+
+  function idxAt(s) {          // last point index with pts[i].s <= s
+    var lo = 0, hi = pts.length - 1;
+    while (hi - lo > 1) { var mid = (lo + hi) >> 1; if (pts[mid].s <= s) lo = mid; else hi = mid; }
+    return lo;
+  }
+  function ptAt(s) {
+    var i = idxAt(s), a = pts[i], b = pts[Math.min(i + 1, pts.length - 1)];
+    var u = b.s > a.s ? (s - a.s) / (b.s - a.s) : 0;
+    return { x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u };
+  }
+  function f(n) { return Math.round(n * 100) / 100; }
+  function polyD(s0, s1) {      // path data for the track between s0 and s1
+    if (s1 - s0 < 0.05) return '';
+    var a = ptAt(s0), d = 'M' + f(a.x) + ' ' + f(a.y);
+    // skip samples hugging either end, so the butt caps take the true local direction (no notches)
+    for (var i = idxAt(s0) + 1; i < pts.length && pts[i].s < s1 - 0.3; i++) if (pts[i].s > s0 + 0.3) d += 'L' + f(pts[i].x) + ' ' + f(pts[i].y);
+    var b = ptAt(s1); return d + 'L' + f(b.x) + ' ' + f(b.y);
+  }
+  // stem body from y0 to y1, clipped by the slanted cut (line through (x, cut), slope 1:2, high on the right)
+  function stemPoly(x, y0, y1, cut) {
+    var top = Math.min(y0, y1), bot = Math.max(y0, y1);
+    var poly = [[x - HW, top], [x + HW, top], [x + HW, bot], [x - HW, bot]];
+    if (cut != null) {
+      var inside = function (p) { return p[1] >= cut - 0.5 * (p[0] - x) - 1e-6; };
+      var out = [];
+      for (var i = 0; i < poly.length; i++) {
+        var A = poly[i], B = poly[(i + 1) % poly.length], ia = inside(A), ib = inside(B);
+        if (ia) out.push(A);
+        if (ia !== ib) {      // intersect AB with y = cut - 0.5 (X - x)
+          var g = function (p) { return p[1] - (cut - 0.5 * (p[0] - x)); };
+          var tt = g(A) / (g(A) - g(B));
+          out.push([A[0] + (B[0] - A[0]) * tt, A[1] + (B[1] - A[1]) * tt]);
+        }
+      }
+      poly = out;
+    }
+    return poly.map(function (p) { return f(p[0]) + ',' + f(p[1]); }).join(' ');
+  }
+
+  // ---- timeline (seconds) ----
+  var D = 1.95 / P.speed;                 // the gesture: hook peels, pen writes i-d-a
+  var T = {};
+  T.fade = [0, 0.4];
+  T.write = [0.4 + P.hold, 0.4 + P.hold + D];
+  T.dot = [T.write[1] - 0.02, T.write[1] + 0.2];      // the pen's last tap
+  T.glide = [T.dot[1] + 0.5, T.dot[1] + 1.4];         // 0.5 s on the finished word, then 0.9 s glide
+  T.essay = [T.glide[0] + 0.45, T.glide[1] + 0.25];
+  T.end = T.essay[1];
+
+  var HEAD0 = HL;                        // the pen starts at the δ's flat terminal
+  function headAt(t) { return sAtWeighted(penEase(prog(t, T.write)) * WTOT); }
+  // thread length: the hook first stretches (tail held at the bowl), then the tail follows the pen
+  var LW = HL + 34;
+  function tailAt(h) { return Math.max(0, h - LW); }
+  // the bowl rights itself once the thread has let go of it
+  var tLetGo = T.write[1];
+  for (var ts = T.write[0]; ts < T.write[1]; ts += 0.005) { if (tailAt(headAt(ts)) > 22) { tLetGo = ts; break; } }
+  T.bowl = [tLetGo, tLetGo + 0.6 * D];
+  // camera follows the pen: reaches the lockup framing just as the a begins
+  var sA = segs[segs.length - 3].s0;
+  var wA = (function () { for (var j = 0; j < segs.length; j++) if (segs[j].s0 >= sA - 0.01) return WT[j]; return WTOT; })();
+  var camFrac = wA / WTOT;
+
+  // A mapping places content point A at screen point S with scale k: screen = S + k (p - A).
+  function mapping(k, ax, ay, sx, sy) { return { k: k, tx: sx - k * ax, ty: sy - k * ay }; }
+  function mix(m1, m2, u) { return { k: lerp(m1.k, m2.k, u), tx: lerp(m1.tx, m2.tx, u), ty: lerp(m1.ty, m2.ty, u) }; }
+
+  function layout() {
+    var vw = window.innerWidth, vh = window.innerHeight;
+    stage.setAttribute('viewBox', '0 0 ' + vw + ' ' + vh);
+    var cx = vw / 2, cy = vh * 0.48;
+    var k1 = Math.min(vh * P.size / 100, vw * 0.4) / MB.height;   // δ height = size% of the viewport height
+    var k2 = Math.min(k1 * 0.92, vw * 0.84 / LOCK.w);
+    var r = lockup.getBoundingClientRect();
+    var kh = r.height / LOCK.h;
+    return { k1: k1, k2: k2, cx: cx, cy: cy,
+      header: mapping(kh, LCX, LCY, r.left + r.width / 2, r.top + r.height / 2) };
+  }
+
+  function render(t) {
+    var L = layout();
+    var started = t >= T.write[0];
+    var head = started ? headAt(t) : HEAD0;
+    var tail = tailAt(head);
+    var done = t >= T.write[1];
+
+    // camera: δ centred -> lockup centred, paced by the pen; then glide to the header
+    var wNow = started ? penEase(prog(t, T.write)) : 0;
+    var uC = inOutSine(clamp01(wNow / camFrac));
+    var pre = mapping(lerp(L.k1, L.k2, uC), lerp(MCX, LCX, uC), lerp(MCY, LCY, uC), L.cx, L.cy);
+    var m = mix(pre, L.header, inOut3(prog(t, T.glide)));
+    world.setAttribute('transform', 'translate(' + f(m.tx) + ' ' + f(m.ty) + ') scale(' + m.k + ')');
+    world.style.opacity = out3(prog(t, T.fade));
+
+    // δ: the official filled path at rest, the stroked stand-in once the pen moves
+    mark.style.visibility = started ? 'hidden' : 'visible';
+    proxy.style.visibility = started ? 'visible' : 'hidden';
+
+    // bowl straightens out of its 20° lean and settles to the o's proportions
+    var uB = inOut3(prog(t, T.bowl));
+    ring.setAttribute('rx', lerp(BOWL.rx, O.rx, uB)); ring.setAttribute('ry', lerp(BOWL.ry, O.ry, uB));
+    ring.setAttribute('transform', 'rotate(' + lerp(BOWL.th, 0, uB) + ' ' + C.x + ' ' + C.y + ')');
+
+    // the thread: everything between tail and head (lift mode: broken over the inter-letter gaps)
+    var d = '';
+    if (started && !done) {
+      if (!LIFT) d = polyD(tail, head);
+      else for (var j = 0; j < RUNS.length; j++) {   // contiguous inked runs, so no seams at segment joins
+        var a = Math.max(tail, RUNS[j][0]), b = Math.min(head, RUNS[j][1]);
+        if (b > a) d += polyD(a, b);
+      }
+    }
+    thread.setAttribute('d', d);
+
+    // letters persist behind the pen
+    for (j = 0; j < segs.length; j++) {
+      var g = segs[j]; if (g.kind !== 'ink') continue;
+      if (done || head <= g.s0) { g.el.style.display = 'none'; continue; }
+      g.el.style.display = '';
+      var e = Math.min(head, g.s1);
+      if (g.stem) g.el.setAttribute('points', stemPoly(g.stem, pts[g.i0].y, ptAt(e).y, g.cut));
+      else g.el.setAttribute('d', polyD(g.s0, e) + (head >= g.s1 ? 'Z' : ''));
+    }
+    ida.style.visibility = done ? 'visible' : 'hidden';
+
+    // the dot: the pen's last tap
+    var uD = prog(t, T.dot);
+    dot.style.display = uD > 0 ? '' : 'none';
+    dot.setAttribute('cx', DOT.x); dot.setAttribute('cy', DOT.y);
+    dot.setAttribute('r', f(12.6 * (0.35 + 0.65 * out3(uD))));
+    dot.style.opacity = clamp01(uD * 8);
+
+    // essay
+    var uE = out3(prog(t, T.essay));
+    for (var i = 0; i < fadeEls.length; i++) {
+      fadeEls[i].style.opacity = uE;
+      fadeEls[i].style.transform = uE < 1 ? 'translateY(' + (1 - uE) * 10 + 'px)' : '';
+    }
+  }
+
+  var finished = false;
+  function finish() {
+    if (finished) return; finished = true;
+    root.className = root.className.replace(/\s*\bintro\b/, '');
+    for (var i = 0; i < fadeEls.length; i++) { fadeEls[i].style.opacity = ''; fadeEls[i].style.transform = ''; }
+    if (stage.parentNode) stage.parentNode.removeChild(stage);
+    ['keydown', 'pointerdown', 'wheel', 'touchmove'].forEach(function (ev) { removeEventListener(ev, skip, { passive: true }); });
+  }
+  function skip(e) {
+    if (tunePanel && e && e.target && tunePanel.contains(e.target)) return;
+    finish();
+  }
+
+  // ---- ?tune panel ----
+  var tunePanel = null;
+  if (/[?&]tune\b/.test(q)) {
+    tunePanel = document.createElement('div');
+    tunePanel.id = 'tune';
+    tunePanel.innerHTML =
+      '<label>hold <span id="tv-hold"></span><input id="tn-hold" type="range" min="0" max="3" step="0.1"></label>' +
+      '<label>speed <span id="tv-speed"></span><input id="tn-speed" type="range" min="0.5" max="2" step="0.05"></label>' +
+      '<label>logo size <span id="tv-size"></span><input id="tn-size" type="range" min="30" max="70" step="1"></label>' +
+      '<div class="row"><button type="button" id="tn-line">one line</button><button type="button" id="tn-lift">pen lifts</button></div>' +
+      '<div class="row"><button type="button" id="tn-replay">replay</button></div>';
+    document.body.appendChild(tunePanel);
+    var cur = { hold: P.hold, speed: P.speed, size: P.size, pen: P.pen };
+    var show = function () {
+      $('tv-hold').textContent = cur.hold.toFixed(1) + ' s';
+      $('tv-speed').textContent = cur.speed.toFixed(2) + '×';
+      $('tv-size').textContent = cur.size + ' vh';
+      $('tn-line').className = cur.pen === 'line' ? 'on' : '';
+      $('tn-lift').className = cur.pen === 'lift' ? 'on' : '';
+      var url = location.pathname + '?tune&hold=' + cur.hold + '&speed=' + cur.speed + '&size=' + cur.size + '&pen=' + cur.pen;
+      try { history.replaceState(null, '', url); } catch (e) {}
+      return url;
+    };
+    ['hold', 'speed', 'size'].forEach(function (key) {
+      var el = $('tn-' + key); el.value = cur[key];
+      el.addEventListener('input', function () { cur[key] = parseFloat(el.value); show(); });
+    });
+    $('tn-line').addEventListener('click', function () { cur.pen = 'line'; show(); });
+    $('tn-lift').addEventListener('click', function () { cur.pen = 'lift'; show(); });
+    $('tn-replay').addEventListener('click', function () { location.href = show(); });
+    show();
+  }
+
+  window.__oidaIntroStarted = true;
+
+  // ?replay&seek=0.9 freezes the timeline at that moment (review captures only).
+  var seek = /[?&](replay|tune)\b/.test(q) && /[?&]seek=([\d.]+)/.exec(q);
+  if (seek) {
+    var tsk = parseFloat(seek[1]);
+    var draw = function () { if (tsk >= T.end) finish(); else render(tsk); };
+    draw(); addEventListener('resize', draw);
+    window.__oida = { T: T, P: P, HL: HL, TOTAL: TOTAL, layout: layout, headAt: headAt, ptAt: ptAt };
+    return;
+  }
+
+  ['keydown', 'pointerdown', 'wheel', 'touchmove'].forEach(function (ev) { addEventListener(ev, skip, { passive: true }); });
+  try { render(0); } catch (e) { finish(); return; }
+  var t0 = null;
+  function frame(now) {
+    if (finished) return;
+    if (t0 === null) t0 = now;
+    var t = (now - t0) / 1000;
+    try {
+      if (t >= T.end) { render(T.end); finish(); return; }
+      render(t);
+    } catch (e) { finish(); return; }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
