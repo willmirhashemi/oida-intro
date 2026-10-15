@@ -59,7 +59,7 @@
   .l { display: block; will-change: transform; }
   #b1, #b2 { grid-area: 1 / 1; }
   /* the statistic: the number is the hero, the line under it says what it is */
-  #b2 .num { font-size: 200px; line-height: 0.9; }
+  #b2 .num { font-size: 320px; line-height: 0.88; }
   #b2 .sub { font-size: 64px; line-height: 1.02; }
   #b2 .m + .m .sub { margin-top: 0; }
 
@@ -101,10 +101,11 @@
 
   <div id="title">
     <h1 class="hl" id="b1"><span class="m"><span class="l">Every job site</span></span><span class="m"><span class="l">has a story.</span></span></h1>
-    <!-- STAT. Source (keep on file): Triple-I + Casualty Actuarial Society, "Impact as of Year-End 2024", released 2025-10-30:
-         litigation trends ("social inflation") added $231.6B–$281.2B to U.S. auto and general liability losses, 2015–2024,
-         beyond economic inflation. All U.S. liability lines, not construction-only. Vault: R3 / Industry Snapshot. -->
-    <p class="hl" id="b2"><span class="m"><span class="l num">$230 billion+</span></span><span class="m"><span class="l sub">added to U.S. liability losses</span></span><span class="m"><span class="l sub">by litigation, 2015–2024</span></span></p>
+    <!-- STAT. Source (keep on file): Sedgwick, State of the Line, General Liability, 2025 year-end (CY 2025, Sedgwick's GL claims, all industries):
+         "litigated claims ... representing 5.76% of closed claims but nearly 70% of total dollars paid, with an average cost 37.5 times higher than non-litigated claims."
+         https://stateoftheline.sedgwick.com/wp-content/uploads/2026/03/sedgwick-stateoftheline-2025yearend-generalliability-summary-1.pdf
+         Not construction-only: it is all general liability claims. Same report: New York's litigated claim rate is 2.9x the national average. -->
+    <p class="hl" id="b2"><span class="m"><span class="l num">37.5&times;</span></span><span class="m"><span class="l sub">what a liability claim costs</span></span><span class="m"><span class="l sub">once it goes to court</span></span></p>
   </div>
 </div>
 
