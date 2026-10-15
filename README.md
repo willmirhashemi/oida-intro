@@ -7,6 +7,7 @@
 |---|---|---|
 | `site/` | **useoida.com**, ready to deploy (intro + Will's essay, self-hosted font, icons, share image). See `site/README.md` | Dhruv (Vercel) |
 | `video/SCRIPT.md` | **Final 90 s concept-video script**: scene by scene, ElevenLabs takes, never-say list, sources | Burak |
+| `video/Oida_Pitch_Trailer_1080p.mp4` | **The pitch trailer** (1:08, 1080p, H.264 + AAC), built in After Effects on the ink-flood opening, the restyled hardware films and the Sedgwick, ILO and McKinsey numbers below | Everyone |
 | `video/opening-ink-flood.html` | **The video's opening** (δ → oida → ink flood → first line → 37.5× stat). Record with `?record` | Burak |
 | `video/opening-unbroken-line.html` | The alternative opening (not chosen) | Reference |
 | `animation.html` | The logo animation alone, ends on "oida" | Anyone |
