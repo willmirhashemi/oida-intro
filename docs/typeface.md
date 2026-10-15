@@ -7,7 +7,7 @@ Will's words: "established, has history (Oida draws back from Greek times), dura
 - Craft details (these are the point):
   - font-variant-numeric: oldstyle-nums proportional-nums for body text.
   - Real italics for the meaning line.
-  - Add the meaning line in Greek, set in Piazzolla: «In ancient Greek, <span lang="grc">οἶδα</span> means “I have seen, therefore I know.”» (replace the placeholder essay's last line with exactly this).
+  - Add the meaning line in Greek, set in Piazzolla: «In ancient Greek, <span lang="grc">οἶδα</span> means “I have seen, and therefore I know.”» (replace the placeholder essay's last line with exactly this).
   - Labels ("Get in touch", the replay link, tune panel labels) in Piazzolla small caps (font-variant-caps: all-small-caps; letter-spacing ~0.06em), not monospace.
   - hanging-punctuation: first last; text-wrap: pretty for paragraphs; no orphaned last-line words.
   - Curly quotes and proper apostrophes in all copy (worker’s, “…”).

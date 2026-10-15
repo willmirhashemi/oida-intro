@@ -1,7 +1,7 @@
 # Oida one-page site — intro animation prototype brief (shared by all builders)
 
 ## What Oida is
-Oida is a hard-hat camera + evidence platform for construction: worker-perspective footage, sealed (hashed, chained) so alteration is detectable, used for claims/insurance, with a second line licensing footage to AI labs. Name from Greek οἶδα, "I have seen, therefore I know".
+Oida is a hard-hat camera + evidence platform for construction: worker-perspective footage, sealed (hashed, chained) so alteration is detectable, used for claims/insurance, with a second line licensing footage to AI labs. Name from Greek οἶδα, "I have seen, and therefore I know".
 
 ## The page
 A one-page mission site in the style of aksharadata.com: a single centered serif column, a short essay (~150–250 words), a meaning line about οἶδα, and "Get in touch" + email at the end. No nav, no buttons, no product screenshots.
@@ -51,6 +51,6 @@ Oida gives every crew a witness. A small camera on the hard hat records the work
 
 We never score a worker or rank a crew. The record exists to protect the people who build, and the companies that stand behind them.
 
-In ancient Greek, oida means “I have seen, therefore I know.”
+In ancient Greek, oida means “I have seen, and therefore I know.”
 
 Get in touch: hello@useoida.com
