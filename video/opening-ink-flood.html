@@ -378,7 +378,9 @@
     var R = Math.exp(lnR);
     // the counter: a breath of swell, then it fills in, closing to a point at the end
     // it swells with the letter at first, then fills in, reaching a point just as the last corner goes under
-    var ri = k * INN.ry * Math.pow(R / r0, 0.8) * Math.pow(1 - smooth(clamp01((u - 0.35) / 0.58)), 1.3);
+    // revised 2026-10-14: the counter closes early, while the o is still letter-sized, so the o reads as filling in
+    // (becoming a full stop) and the screen never shows a big disc with a small centred hole (an eye / lens read)
+    var ri = k * INN.ry * Math.pow(R / r0, 0.5) * Math.pow(1 - smooth(clamp01(u / 0.3)), 1.2);
     return { cx: cx, cy: cy, R: R, ax: ax, ri: ri, bx: INN.rx / INN.ry };
   }
 
@@ -452,7 +454,7 @@
       var uL = clamp01((t - lineStart[li]) / RISE);
       var y = 1 - out4(uL);
       lines[li].style.transform = 'translateY(' + f(y * 108) + '%)';
-      lines[li].style.opacity = f(clamp01(uL * 2.5));
+      lines[li].style.opacity = '';             // crisp: the mask alone reveals each line (no grey fade)
     }
   }
   var T_END = T.final + LEAD;
