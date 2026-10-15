@@ -4,6 +4,15 @@ The intro for Oida's one-page mission site. The δ mark appears large, holds, th
 
 Chosen by Will on 2026-10-14 from four round-2 studies (hook retracts, hook becomes the i, the line, the thread), at the default settings below.
 
+## Brand files (vector)
+| File | What it is |
+|---|---|
+| `brand/oida-mark-ink.svg` / `-bone.svg` | The δ mark, the official master path (metadata stripped), in ink `#141412` or bone `#F3EFE6` |
+| `brand/oida-wordmark-ink.svg` / `-bone.svg` | The "oida" wordmark, fully outlined: filled shapes only, no strokes, no fonts. Exported from the page's header lockup and checked pixel-for-pixel against it |
+| `assets/oida-mark.svg` | The original master as delivered (keeps its c2pa provenance metadata) |
+
+The wordmark bowls are true ellipse arcs. The exact stroke offset of the page's ellipses differs from a scaled ellipse by about 0.01 units, which is invisible at any size. These files scale to any size and are ready for print, patches, favicons and a trademark specimen.
+
 ## Run it
 Open `index.html` in a browser. It is one self-contained file: inline SVG, CSS and JS, no build step, no library. The only external request is the Piazzolla font from Google Fonts.
 
