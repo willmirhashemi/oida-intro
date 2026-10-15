@@ -39,8 +39,7 @@
   /* Title card. */
   #title {
     position: absolute; inset: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 64px;
+    display: grid; place-items: center;
     color: var(--cream);
     text-align: center;
     visibility: hidden;
@@ -58,6 +57,11 @@
   /* each line rises out of its own mask; padding keeps the glyphs clear of the clip */
   .m { display: block; overflow: hidden; padding: 0.08em 0.1em 0.06em; margin: -0.08em 0 -0.06em; }
   .l { display: block; will-change: transform; }
+  #b1, #b2 { grid-area: 1 / 1; }
+  /* the statistic: the number is the hero, the line under it says what it is */
+  #b2 .num { font-size: 200px; line-height: 0.9; }
+  #b2 .sub { font-size: 64px; line-height: 1.02; }
+  #b2 .m + .m .sub { margin-top: 0; }
 
   .hint {
     position: fixed; left: 0; right: 0; bottom: 18px; margin: 0; text-align: center;
@@ -97,7 +101,8 @@
 
   <div id="title">
     <h1 class="hl" id="b1"><span class="m"><span class="l">Every job site</span></span><span class="m"><span class="l">has a story.</span></span></h1>
-    <p class="hl" id="b2"><span class="m"><span class="l">Most of the time</span></span><span class="m"><span class="l">nobody can prove it.</span></span></p>
+    <!-- STAT: wording pending from Will (source to be kept on file). Edit these two lines only. -->
+    <p class="hl" id="b2"><span class="m"><span class="l num">$230 billion</span></span><span class="m"><span class="l sub">[what the $230B measures]</span></span></p>
   </div>
 </div>
 
@@ -349,7 +354,9 @@
   T.flood = [T.end + 0.6, T.end + 0.6 + FLOOD];
   var RISE = 1.1, STAG = 0.16;
   T.l1 = T.flood[1] + 0.35;                 // line 1 starts rising
-  T.l2 = T.l1 + RISE + STAG + 1.2;          // line 2 starts after line 1 has held ~1.2 s
+  var HOLD1 = 2.5, OUTD = 0.55;
+  T.out = T.l1 + RISE + STAG + HOLD1;       // line 1 wipes up and out after holding 2.5 s
+  T.l2 = T.out + OUTD + 0.25;               // then the statistic rises in its place
   T.final = T.l2 + RISE + STAG;             // both lines settled
   var lines = title.querySelectorAll('.l');
   var lineStart = [T.l1, T.l1 + STAG, T.l2, T.l2 + STAG];
@@ -448,14 +455,14 @@
 
     // ---- the title: each line rises out of its mask ----
     title.style.visibility = full ? 'visible' : 'hidden';
-    // line 1 holds at the optical centre alone, then eases up to make room as line 2 rises
-    var shift = (b2.offsetHeight + 64) / 2;
-    var uS = inOutSine(clamp01((t - T.l2) / (RISE + STAG)));
-    b1.style.transform = 'translateY(' + f(shift * (1 - uS)) + 'px)';
-    b2.style.transform = 'translateY(' + f(shift * (1 - uS)) + 'px)';
+    // line 1 rises, holds, then wipes up out of its masks; the statistic rises in the same place
     for (var li = 0; li < lines.length; li++) {
       var uL = clamp01((t - lineStart[li]) / RISE);
       var y = 1 - out4(uL);
+      if (li < 2 && t >= T.out) {
+        var uO = clamp01((t - T.out - li * 0.08) / OUTD);
+        y = -inOut3(uO);
+      }
       lines[li].style.transform = 'translateY(' + f(y * 108) + '%)';
       lines[li].style.opacity = '';             // crisp: the mask alone reveals each line (no grey fade)
     }
