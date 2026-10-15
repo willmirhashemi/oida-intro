@@ -7,7 +7,7 @@
 <meta name="description" content="Concept video opening: the δ writes oida, the o floods the frame with ink, and the first line sets in cream.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   :root {
     --cream: #F3EFE6;
@@ -60,8 +60,12 @@
   #b1, #b2 { grid-area: 1 / 1; }
   /* the statistic: the number is the hero, the line under it says what it is */
   #b2 .num { font-size: 320px; line-height: 0.88; }
-  #b2 .sub { font-size: 64px; line-height: 1.02; }
+  #b2 .sub { font-size: 56px; line-height: 1.04; }
   #b2 .m + .m .sub { margin-top: 0; }
+  /* source line under the statistic: small, muted, appears once the stat has settled */
+  .src { position: absolute; left: 0; right: 0; bottom: 120px; margin: 0; text-align: center;
+         font: 500 22px/1 'JetBrains Mono', ui-monospace, Menlo, monospace; letter-spacing: 0.16em;
+         text-transform: uppercase; color: var(--muted); opacity: 0; }
 
   .hint {
     position: fixed; left: 0; right: 0; bottom: 18px; margin: 0; text-align: center;
@@ -105,7 +109,8 @@
          "litigated claims ... representing 5.76% of closed claims but nearly 70% of total dollars paid, with an average cost 37.5 times higher than non-litigated claims."
          https://stateoftheline.sedgwick.com/wp-content/uploads/2026/03/sedgwick-stateoftheline-2025yearend-generalliability-summary-1.pdf
          Not construction-only: it is all general liability claims. Same report: New York's litigated claim rate is 2.9x the national average. -->
-    <p class="hl" id="b2"><span class="m"><span class="l num">37.5&times;</span></span><span class="m"><span class="l sub">what a liability claim costs</span></span><span class="m"><span class="l sub">once it goes to court</span></span></p>
+    <p class="hl" id="b2"><span class="m"><span class="l num">37.5&times;</span></span><span class="m"><span class="l sub">what a liability claim costs, on average,</span></span><span class="m"><span class="l sub">once it becomes a lawsuit</span></span></p>
+    <p class="src" id="src">Sedgwick &middot; U.S. general liability claims &middot; 2025</p>
   </div>
 </div>
 
@@ -469,7 +474,10 @@
       lines[li].style.transform = 'translateY(' + f(y * 108) + '%)';
       lines[li].style.opacity = '';             // crisp: the mask alone reveals each line (no grey fade)
     }
+    var srcEl = document.getElementById('src');
+    if (srcEl) srcEl.style.opacity = f(clamp01((t - (T.final - 0.2)) / 0.6));
   }
+  T.final += 0.6;                           // let the source line settle
   var T_END = T.final + LEAD;
 
   window.__oida = { T: T, LEAD: LEAD };
