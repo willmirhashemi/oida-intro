@@ -101,8 +101,10 @@
 
   <div id="title">
     <h1 class="hl" id="b1"><span class="m"><span class="l">Every job site</span></span><span class="m"><span class="l">has a story.</span></span></h1>
-    <!-- STAT: wording pending from Will (source to be kept on file). Edit these two lines only. -->
-    <p class="hl" id="b2"><span class="m"><span class="l num">$230 billion</span></span><span class="m"><span class="l sub">[what the $230B measures]</span></span></p>
+    <!-- STAT. Source (keep on file): Triple-I + Casualty Actuarial Society, "Impact as of Year-End 2024", released 2025-10-30:
+         litigation trends ("social inflation") added $231.6B–$281.2B to U.S. auto and general liability losses, 2015–2024,
+         beyond economic inflation. All U.S. liability lines, not construction-only. Vault: R3 / Industry Snapshot. -->
+    <p class="hl" id="b2"><span class="m"><span class="l num">$230 billion+</span></span><span class="m"><span class="l sub">added to U.S. liability losses</span></span><span class="m"><span class="l sub">by litigation, 2015–2024</span></span></p>
   </div>
 </div>
 
@@ -357,9 +359,9 @@
   var HOLD1 = 2.5, OUTD = 0.55;
   T.out = T.l1 + RISE + STAG + HOLD1;       // line 1 wipes up and out after holding 2.5 s
   T.l2 = T.out + OUTD + 0.25;               // then the statistic rises in its place
-  T.final = T.l2 + RISE + STAG;             // both lines settled
+  T.final = T.l2 + RISE + 2 * STAG;         // the statistic has settled
   var lines = title.querySelectorAll('.l');
-  var lineStart = [T.l1, T.l1 + STAG, T.l2, T.l2 + STAG];
+  var lineStart = [T.l1, T.l1 + STAG, T.l2, T.l2 + STAG, T.l2 + 2 * STAG];
 
   var OUT = { rx: O.rx + HW, ry: O.ry + HW }, INN = { rx: O.rx - HW, ry: O.ry - HW };
   var COVER_AT = 0.9;                       // fraction of the flood at which the outer edge clears the last corner
