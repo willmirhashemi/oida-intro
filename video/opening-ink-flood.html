@@ -31,9 +31,9 @@
     width: 1920px; height: 1080px;
     transform-origin: 50% 50%;
     background: var(--cream);
-    overflow: hidden;
+    overflow: visible;     /* the flood may spill past the 16:9 frame into the letterbox */
   }
-  #stage { position: absolute; inset: 0; width: 1920px; height: 1080px; display: block; color: var(--ink); }
+  #stage { position: absolute; inset: 0; width: 1920px; height: 1080px; display: block; color: var(--ink); overflow: visible; }
   #floodPath { fill: var(--ink); fill-rule: evenodd; }
 
   /* Title card. */
@@ -129,9 +129,10 @@
   var lockup = $('lockup'), floodPath = $('floodPath'), swallowPath = $('swallowPath'), title = $('title'), b1 = $('b1'), b2 = $('b2');
   var q = location.search;
 
-  var SW = 1920, SH = 1080;
+  var SW = 1920, SH = 1080, FIT = 1;
   function fit() {
     var s = Math.min(window.innerWidth / SW, window.innerHeight / SH);
+    FIT = s;
     frameEl.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
   }
   fit(); addEventListener('resize', fit);
@@ -361,7 +362,9 @@
     return 'M' + f(cx - rx) + ' ' + f(cy) + 'a' + f(rx) + ' ' + f(ry) + ' 0 1 0 ' + f(2 * rx) + ' 0a' + f(rx) + ' ' + f(ry) + ' 0 1 0 ' + f(-2 * rx) + ' 0Z';
   }
   function coverR(cx, cy, ax) {             // vertical semi-axis needed to cover all four corners
-    var r = 0, cs = [[0, 0], [SW, 0], [0, SH], [SW, SH]];
+    var hx = window.innerWidth / FIT / 2, hy = window.innerHeight / FIT / 2;   // window half-extents in stage px
+    var x0 = SW / 2 - hx, x1 = SW / 2 + hx, y0 = SH / 2 - hy, y1 = SH / 2 + hy;
+    var r = 0, cs = [[x0, y0], [x1, y0], [x0, y1], [x1, y1]];
     for (var i = 0; i < 4; i++) { var dx = (cs[i][0] - cx) / ax, dy = cs[i][1] - cy; r = Math.max(r, Math.sqrt(dx * dx + dy * dy)); }
     return r;
   }
@@ -441,7 +444,7 @@
       floodPath.style.display = '';
     } else { floodPath.style.display = 'none'; swallowPath.setAttribute('d', ''); }
     frameEl.style.background = full ? 'var(--ink)' : 'var(--cream)';
-    root.style.setProperty('--flood', f(full ? 1 : smooth(clamp01(uF / COVER_AT))));
+    root.style.setProperty('--flood', full ? 1 : 0);
 
     // ---- the title: each line rises out of its mask ----
     title.style.visibility = full ? 'visible' : 'hidden';
