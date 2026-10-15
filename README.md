@@ -1,0 +1,53 @@
+# Oida intro: "the thread"
+
+The intro for Oida's one-page mission site. The δ mark appears large, holds, then its hook peels off and, as one unbroken pen line, writes "ida" beside the bowl, which rights itself into the "o". The finished "oida" glides into the header and the essay fades in.
+
+Chosen by Will on 2026-10-14 from four round-2 studies (hook retracts, hook becomes the i, the line, the thread), at the default settings below.
+
+## Run it
+Open `index.html` in a browser. It is one self-contained file: inline SVG, CSS and JS, no build step, no library. The only external request is the Piazzolla font from Google Fonts.
+
+| URL option | What it does |
+|---|---|
+| `?replay` | Play the intro even if it already played this visit |
+| `?tune` | Show the tuning panel (hold, speed, logo size, one line / pen lifts) and write values into the URL |
+| `?seek=2.4` | Freeze the intro at that time in seconds (for screenshots) |
+| `?hold=1.5&speed=1&size=50&pen=lift` | Override the defaults directly |
+
+**Defaults (the approved version):** hold 1.5 s, speed 1×, logo size 50 vh, one continuous line. To reset after tuning, open the file without any query string.
+
+## Timeline at defaults (about 5.7 s to readable essay)
+| Time | What happens |
+|---|---|
+| 0–0.4 s | The official δ fades in at 50% of viewport height (capped at 40% of width on phones) |
+| 0.4–1.9 s | Hold on the still δ |
+| 1.9–3.85 s | The hook's flat terminal leads off as a pen and writes i, d, a in one stroke; the bowl turns upright into the o |
+| 3.83–4.05 s | The i's dot taps in |
+| 4.05–4.55 s | Hold on the big "oida" |
+| 4.55–5.45 s | Glide into the header |
+| 5.0–5.7 s | Essay fades in |
+
+## Behaviour
+- Plays once per browser tab session (`sessionStorage`), then the page loads straight to the end state.
+- Click, key press, scroll or touch skips to the end.
+- `prefers-reduced-motion: reduce` skips the intro entirely.
+- With JavaScript off, the full page (header wordmark and essay) is in the HTML.
+- If the script fails, the page shows itself after a short failsafe timeout.
+
+## Design rules
+- **The δ at rest is the official mark,** `assets/oida-mark.svg` (one path, ink `#141412`). Never redraw it.
+- **"oida" is drawn, not typed:** monoline paths at the δ's stroke weight (about 23 units in the master's coordinates). Stem tops are cut at a 1:2 slant to echo the δ's flat terminal.
+- **Colours:** bone `#F3EFE6`, ink `#141412`, nothing else.
+- **Type is Piazzolla** (SIL Open Font License 1.1): essay at weight 440, old-style figures, real italics, small-caps labels, and the Greek οἶδα set in Piazzolla. See `docs/typeface.md`.
+
+## Before shipping on useoida.com
+- [ ] Self-host the Piazzolla font files with `OFL.txt` instead of loading them from Google (GDPR).
+- [ ] Replace the placeholder essay with Will's essay.
+- [ ] Remove or gate the `?tune` panel and the "replay" link.
+- [ ] Known rough spots: a brief "oıa" read before the d's ascender rises, and a slight wave where the terminal leads into the i (about 2.2 s).
+
+## Re-shooting frames
+`npm install`, then `npm run frames`. This needs Google Chrome installed, since playwright-core launches the system Chrome. Frames land in `docs/frames/`; `tools/sheet.py` (Pillow) tiles them into a contact sheet.
+
+## History
+Briefs for both rounds are in `docs/`. The decision trail lives in the Oida vault: `10 Website/Website Direction - One-Page Mission Essay - 2026-10-14.md`, D011 (logo) and D012 (typeface).

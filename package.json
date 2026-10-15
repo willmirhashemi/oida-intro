@@ -1,0 +1,12 @@
+{
+  "name": "oida-intro",
+  "private": true,
+  "description": "Oida logo-to-wordmark intro animation (the thread)",
+  "scripts": {
+    "frames": "node tools/shoot.js sheet",
+    "frames:dense": "node tools/shoot.js dense"
+  },
+  "devDependencies": {
+    "playwright-core": "1.48.2"
+  }
+}
