@@ -2,6 +2,19 @@
 
 **Oida** (οἶδα, ancient Greek): “I have seen, and therefore I know.” This is the canonical wording; use it exactly everywhere.
 
+## What's in this repo
+| Folder / file | What it is | Who it's for |
+|---|---|---|
+| `site/` | **useoida.com**, ready to deploy (intro + Will's essay, self-hosted font, icons, share image). See `site/README.md` | Dhruv (Vercel) |
+| `video/SCRIPT.md` | **Final 90 s concept-video script**: scene by scene, ElevenLabs takes, never-say list, sources | Burak |
+| `video/opening-ink-flood.html` | **The video's opening** (δ → oida → ink flood → first line → 37.5× stat). Record with `?record` | Burak |
+| `video/opening-unbroken-line.html` | The alternative opening (not chosen) | Reference |
+| `animation.html` | The logo animation alone, ends on "oida" | Anyone |
+| `index.html` | The site page as reviewed (same as `site/`, with review controls) | Review |
+| `brand/` | Vector logo files: δ mark and "oida" wordmark, ink and bone, plus `preview.html` | Anyone |
+| `assets/` | Original master logo SVGs as delivered | Archive |
+| `docs/` | Design briefs, typeface decision, video-opening brief | Reference |
+
 The intro for Oida's one-page mission site. The δ mark appears large, holds, then its hook peels off and, as one unbroken pen line, writes "ida" beside the bowl, which rights itself into the "o". The finished "oida" glides into the header and the essay fades in.
 
 Chosen by Will on 2026-10-14 from four round-2 studies (hook retracts, hook becomes the i, the line, the thread), at the default settings below.
